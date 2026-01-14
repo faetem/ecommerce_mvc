@@ -19,7 +19,7 @@ final class ProductController extends Controller
         
         // Affiche la liste des produits
         $this->render('product/list-products', params: [
-            'title' => 'Liste des produits',
+            'title' => 'Produits | Amazonie',
             'products' => $products
         ]);
     }

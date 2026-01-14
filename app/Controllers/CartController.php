@@ -13,59 +13,128 @@ final class CartController extends Controller
     /**
      * Affiche le panier d'un utilisateur
      */
-    public function show(): void
-    {
-        $user_id = $_GET['user_id'] ?? 1; // Par défaut user_id = 1 pour la démo
-        
-        // Ici je récupère les produits du panier de l'user authentifié
-        $cartItems = Cart::getByUserId($user_id);
-        // Ici on récupère le prix total du panier
-        $total = Cart::getTotalByUserId($user_id);
-        
-        $message = null;
-        $messageType = null;
-        
-        if (isset($_GET['success'])) {
-            if ($_GET['success'] === 'added') {
-                $message = 'Produit ajouté au panier avec succès !';
-                $messageType = 'success';
-            } elseif ($_GET['success'] === 'updated') {
-                $message = 'Quantité mise à jour avec succès !';
-                $messageType = 'success';
-            } elseif ($_GET['success'] === 'removed') {
-                $message = 'Article supprimé du panier avec succès !';
-                $messageType = 'success';
-            } elseif ($_GET['success'] === 'cleared') {
-                $message = 'Panier vidé avec succès !';
-                $messageType = 'success';
-            }
-        }
-        
-        if (isset($_GET['error'])) {
-            if ($_GET['error'] === 'stock_insuffisant') {
-                $message = 'Stock insuffisant pour cette quantité.';
-                $messageType = 'error';
-            } elseif ($_GET['error'] === 'update_failed') {
-                $message = 'Erreur lors de la mise à jour.';
-                $messageType = 'error';
-            } elseif ($_GET['error'] === 'delete_failed') {
-                $message = 'Erreur lors de la suppression.';
-                $messageType = 'error';
-            } elseif ($_GET['error'] === 'clear_failed') {
-                $message = 'Erreur lors du vidage du panier.';
-                $messageType = 'error';
-            }
-        }
-        
-        $this->render('cart/index', params: [
-            'title' => 'Mon panier',
-            'cartItems' => $cartItems,
-            'total' => $total,
-            'user_id' => $user_id,
-            'message' => $message,
-            'messageType' => $messageType
-        ]);
+
+    public function index(): void
+{
+    // // 1. Récupérer l'ID de l'utilisateur connecté
+    // // Si pas connecté, on peut rediriger ou gérer un panier vide
+    // $user_id = $_SESSION['user']['id'] ?? null;
+    // $isLoggedIn = isset($_SESSION['user']);
+
+    // if (!$user_id) {
+    //     // Option : Rediriger vers login ou afficher panier vide
+    //     $this->render('cart/index', [
+    //         'title' => 'Mon panier',
+    //         'cartItems' => [],
+    //         'total' => 0,
+    //         'isLoggedIn' => false,
+    //         'message' => 'Connectez-vous pour voir votre panier.',
+    //         'messageType' => 'error'
+    //     ]);
+    //     return;
+    // }
+
+    // // 2. Récupérer les données réelles depuis le Modèle
+    // $cartItems = Cart::getByUserId((int)$user_id);
+    // $total = Cart::getTotalByUserId((int)$user_id);
+
+    // // 3. Gestion des messages (succès/erreur)
+    // $message = null;
+    // $messageType = null;
+    
+    // if (isset($_GET['success'])) {
+    //     $messages = [
+    //         'added' => 'Produit ajouté',
+    //         'updated' => 'Quantité mise à jour',
+    //         'removed' => 'Article supprimé !',
+    //         'cleared' => 'Panier vidé'
+    //     ];
+    //     $message = $messages[$_GET['success']] ?? null;
+    //     $messageType = 'success';
+    // }
+
+    // // 4. Rendu de la vue
+    // $this->render('cart/index', [
+    //     'title' => 'Mon panier',
+    //     'cartItems' => $cartItems,
+    //     'total' => $total,
+    //     'user_id' => $user_id,
+    //     'isLoggedIn' => $isLoggedIn,
+    //     'message' => $message,
+    //     'messageType' => $messageType
+    // ]);
+
+    if (!isset($_SESSION['user'])) {
+        // Option : afficher un panier vide ou rediriger
+        $this->render('cart/index', ['items' => [], 'isLoggedIn' => false]);
+        return;
     }
+
+    $user_id = $_SESSION['user']['id']; // L'ID vient de la session
+    $cartItems = Cart::getByUserId((int)$user_id);
+    $total = Cart::getTotalByUserId((int)$user_id);
+
+    $this->render('cart/index', [
+        'cartItems' => $cartItems,
+        'total' => $total,
+        'isLoggedIn' => true,
+        'user_id' => $user_id // pour tes formulaires
+    ]);
+}
+
+    // public function show(): void
+    // {
+    //     $user_id = $_GET['user_id'] ?? 1; // Par défaut user_id = 1 pour la démo
+        
+    //     // Ici je récupère les produits du panier de l'user authentifié
+    //     $cartItems = Cart::getByUserId($user_id);
+    //     // Ici on récupère le prix total du panier
+    //     $total = Cart::getTotalByUserId($user_id);
+        
+    //     $message = null;
+    //     $messageType = null;
+        
+    //     if (isset($_GET['success'])) {
+    //         if ($_GET['success'] === 'added') {
+    //             $message = 'Produit ajouté au panier avec succès !';
+    //             $messageType = 'success';
+    //         } elseif ($_GET['success'] === 'updated') {
+    //             $message = 'Quantité mise à jour avec succès !';
+    //             $messageType = 'success';
+    //         } elseif ($_GET['success'] === 'removed') {
+    //             $message = 'Article supprimé du panier avec succès !';
+    //             $messageType = 'success';
+    //         } elseif ($_GET['success'] === 'cleared') {
+    //             $message = 'Panier vidé avec succès !';
+    //             $messageType = 'success';
+    //         }
+    //     }
+        
+    //     if (isset($_GET['error'])) {
+    //         if ($_GET['error'] === 'stock_insuffisant') {
+    //             $message = 'Stock insuffisant pour cette quantité.';
+    //             $messageType = 'error';
+    //         } elseif ($_GET['error'] === 'update_failed') {
+    //             $message = 'Erreur lors de la mise à jour.';
+    //             $messageType = 'error';
+    //         } elseif ($_GET['error'] === 'delete_failed') {
+    //             $message = 'Erreur lors de la suppression.';
+    //             $messageType = 'error';
+    //         } elseif ($_GET['error'] === 'clear_failed') {
+    //             $message = 'Erreur lors du vidage du panier.';
+    //             $messageType = 'error';
+    //         }
+    //     }
+        
+    //     $this->render('cart/index', params: [
+    //         'title' => 'Mon panier',
+    //         'cartItems' => $cartItems,
+    //         'total' => $total,
+    //         'user_id' => $user_id,
+    //         'message' => $message,
+    //         'messageType' => $messageType
+    //     ]);
+    // }
 
     /**
      * Ajoute un produit au panier (API JSON)
@@ -128,10 +197,25 @@ final class CartController extends Controller
      */
     public function addFromForm(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /products');
-            return;
+        // if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        //     header('Location: /products');
+        //     return;
+        // }
+
+        if (!isset($_SESSION['user'])) {
+        header('Location: /auth/login');
+        exit;
         }
+
+    $user_id = $_SESSION['user']['id']; // On prend l'ID de la session
+    $product_id = $_POST['product_id'];
+    $quantite = (int)$_POST['quantite'];
+
+    // ... logique de sauvegarde ...
+
+    // REDIRECTION PROPRE : on ne passe plus le user_id dans l'URL
+    header('Location: /cart?success=added');
+    exit;
         
         $product_id = $_POST['product_id'] ?? null;
         $quantite = intval($_POST['quantite'] ?? 1);
