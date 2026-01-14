@@ -1,16 +1,23 @@
 <!-- Liste des produits -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h2>Liste des produits</h2>
-        <a href="/products/create" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">
-            ➕ Ajouter un produit
-        </a>
+        <!-- Affiche la création de produit aux admins seulement  -->
+        <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'ROLE_ADMIN'): ?>
+            <a href="/products/create" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">
+                ➕ Ajouter un produit
+            </a>
+        <?php endif; ?>
     </div>
     
     <?php if (empty($products)): ?>
         <div style="text-align: center; padding: 40px; background-color: #f8f9fa; border-radius: 4px;">
             <p style="color: #666; font-size: 18px;">Aucun produit disponible.</p>
-            <a href="/products/create" style="color: #007bff; text-decoration: none;">Créer le premier produit</a>
+            <!-- Affiche la création de produit aux admins seulement  -->
+            <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'ROLE_ADMIN'): ?>
+            <a href="/products/create" style="color: #007bff; text-decoration: none;">
+                Créer le premier produit
+            </a>
+        <?php endif; ?>
         </div>
     <?php else: ?>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">

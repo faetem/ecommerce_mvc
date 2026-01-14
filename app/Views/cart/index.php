@@ -16,6 +16,13 @@
             <?= $messageType === 'success' ? '✅ ' : '❌ ' ?><?= htmlspecialchars($message) ?>
         </div>
     <?php endif; ?>
+
+    <?php if (!$isLoggedIn): ?>
+    <div style="padding: 15px; margin-bottom: 20px; border-radius: 4px; background-color: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb;">
+        <strong>Note :</strong> Vous n'êtes pas connecté. 
+        <a href="/auth/login" style="font-weight: bold; color: #007bff;">Connectez-vous</a> pour enregistrer votre panier.
+    </div>
+<?php endif; ?>
     
     <?php if (empty($cartItems)): ?>
         <div style="text-align: center; padding: 60px; background-color: #f8f9fa; border-radius: 8px;">

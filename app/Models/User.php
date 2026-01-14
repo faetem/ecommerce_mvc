@@ -11,6 +11,8 @@ class User
     private $id;
     private $nom;
     private $email;
+    private $password;
+    private $role;
 
     // =====================
     // Getters / Setters
@@ -26,7 +28,7 @@ class User
         $this->id = $id;
     }
 
-    public function getnom()
+    public function getNom()
     {
         return $this->nom;
     }
@@ -34,6 +36,22 @@ class User
     public function setNom($nom)
     {
         $this->nom = $nom;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+    
+    public function hashPassword() 
+    {
+        // hash du mot de passe dans la BDD pour la sécurité 
+        $this->password = password_hash($this->password, PASSWORD_BCRYPT);
     }
 
     public function getEmail()
@@ -44,6 +62,16 @@ class User
     public function setEmail($email)
     {
         $this->email = $email;
+    }
+
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    public function setRole($role)
+    {
+        $this->role = $role; // 'ROLE_USER'; // user normal par défaut
     }
 
     // =====================
@@ -94,8 +122,17 @@ class User
     public function save()
     {
         $pdo = Database::getPDO();
-        $stmt = $pdo->prepare("INSERT INTO user (nom, email) VALUES (?, ?)");
-        return $stmt->execute([$this->nom, $this->email]);
+        $stmt = $pdo->prepare("INSERT INTO user (nom, email, password, role) VALUES (?, ?, ?, ?)");
+
+        // Si le rôle n'est pas défini dans l'objet, on met 'ROLE_USER' par défaut
+        $roleToSave = $this->role ?? 'ROLE_USER';
+
+        return $stmt->execute([
+            $this->nom, 
+            $this->email, 
+            $this->password, 
+            $roleToSave
+        ]);
     }
 
     /**
@@ -105,8 +142,13 @@ class User
     public function update()
     {
         $pdo = Database::getPDO();
-        $stmt = $pdo->prepare("UPDATE user SET nom = ?, email = ? WHERE id = ?");
-        return $stmt->execute([$this->nom, $this->email, $this->id]);
+        $stmt = $pdo->prepare("UPDATE user SET nom = ?, email = ?, role = ? WHERE id = ?");
+        return $stmt->execute([
+            $this->nom, 
+            $this->email, 
+            $this->role, 
+            $this->id
+        ]);
     }
 
     /**

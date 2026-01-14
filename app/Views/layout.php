@@ -11,7 +11,7 @@
     <title><?= isset($title) ? htmlspecialchars($title) : 'App' ?></title>
 </head>
 <!-- Corps du document -->
-<body>
+<body style="margin: 0;">
 <?php
 // Détermine la page active pour la navigation
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
@@ -28,7 +28,7 @@ $user_id = $_GET['user_id'] ?? 1; // Par défaut user_id = 1 pour la démo
     <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
         <!-- Logo/Titre -->
         <h1 style="margin: 0; font-size: 24px;">
-            <a href="/" style="color: white; text-decoration: none;">Mini MVC</a>
+            <a href="/" style="color: white; text-decoration: none;">Amazonie</a>
         </h1>
         
         <!-- Navigation -->
@@ -60,7 +60,7 @@ $user_id = $_GET['user_id'] ?? 1; // Par défaut user_id = 1 pour la démo
                         📦 Produits
                     </a>
                 </li>
-                <li>
+                <!-- <li>
                     <a href="/products/create" 
                        style="color: <?= $isProductsCreate ? '#ffc107' : 'white' ?>; 
                               text-decoration: none; 
@@ -72,7 +72,7 @@ $user_id = $_GET['user_id'] ?? 1; // Par défaut user_id = 1 pour la démo
                        onmouseout="this.style.backgroundColor='transparent'">
                         ➕ Ajouter un produit
                     </a>
-                </li>
+                </li> -->
                 <!-- <li>
                     <a href="/users/create" 
                        style="color: <?= $isUsersCreate ? '#ffc107' : 'white' ?>; 
@@ -101,7 +101,7 @@ $user_id = $_GET['user_id'] ?? 1; // Par défaut user_id = 1 pour la démo
                         🛒 Panier
                     </a>
                 </li>
-                <li>
+                <!-- <li>
                     <a href="/orders?user_id=<?= $user_id ?>" 
                        style="color: <?= $isOrders ? '#ffc107' : 'white' ?>; 
                               text-decoration: none; 
@@ -115,7 +115,59 @@ $user_id = $_GET['user_id'] ?? 1; // Par défaut user_id = 1 pour la démo
                        onmouseout="this.style.backgroundColor='<?= $isOrders ? 'rgba(255,255,255,0.1)' : 'transparent' ?>'">
                         📋 Mes commandes
                     </a>
+                </li> -->
+                <?php if (isset($_SESSION['user'])): ?>
+                    <li>
+                    <a href="<?= $_SESSION['user']['role'] === 'ROLE_ADMIN' ? '/admin' : '#' ?>" 
+                       style="color: white; 
+                              text-decoration: none; 
+                              padding: 8px 15px; 
+                              border-radius: 4px;
+                              display: inline-block;
+                              transition: background-color 0.3s;"
+                       onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'"
+                       onmouseout="this.style.backgroundColor='transparent'">
+                       <?= $_SESSION['user']['role'] === 'ROLE_ADMIN' ? '⚙️' : '👤' ?> 
+                       <?= htmlspecialchars($_SESSION['user']['nom']) ?>
+                    </a>
+                    <a href="/auth/logout" 
+                       style="color: white; 
+                              text-decoration: none; 
+                              padding: 8px 15px; 
+                              border-radius: 4px;
+                              display: inline-block;
+                              transition: background-color 0.3s;"
+                       onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'"
+                       onmouseout="this.style.backgroundColor='transparent'">
+                        Déconnexion
+                    </a>
+                <?php else: ?>
+                    <a href="/auth/login" 
+                       style="color: white; 
+                              text-decoration: none; 
+                              padding: 8px 15px; 
+                              border-radius: 4px;
+                              display: inline-block;
+                              transition: background-color 0.3s;"
+                       onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'"
+                       onmouseout="this.style.backgroundColor='transparent'">
+                        👤 Se connecter
+                    </a>
+                    <a href="/auth/register" 
+                       style="color: white; 
+                              text-decoration: none; 
+                              padding: 8px 15px; 
+                              border-radius: 4px;
+                              border: solid white 1px;
+                              display: inline-block;
+                              transition: background-color 0.3s;"
+                       onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'"
+                       onmouseout="this.style.backgroundColor='transparent'">
+                        S'inscrire
+                    </a>
+                <?php endif; ?>
                 </li>
+                
             </ul>
         </nav>
     </div>
@@ -127,6 +179,9 @@ $user_id = $_GET['user_id'] ?? 1; // Par défaut user_id = 1 pour la démo
     
 </main>
 <!-- Fin du corps de la page -->
+<footer style="background-color: #343a40; color: white; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <h1>Footer</h1>
+</footer>
 </body>
 <!-- Fin du document HTML -->
 </html>

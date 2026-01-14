@@ -27,6 +27,21 @@ class Controller
         // Inclut le layout qui utilise la variable $content
         require $layoutFile;
     }
+
+    // Vérifie que l'user connecté est admin ou non (fonction accessible partout)
+    protected function isAdmin(): void {
+        // Si pas connecté du tout -> vers la page de login
+        if (!isset($_SESSION['user'])) {
+            header('Location: /auth/login');
+            exit;
+        }
+    
+        // Si connecté mais pas admin -> vers l'accueil avec un message d'erreur
+        if ($_SESSION['user']['role'] !== 'ROLE_ADMIN') {
+            header('Location: /?error=access_denied');
+            exit;
+        }
+    }
 }
 
 
